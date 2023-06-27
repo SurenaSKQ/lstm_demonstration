@@ -1,3 +1,5 @@
+import os
+
 def split_into_chunks(args):
     chunk_size = args.chunk_size # lines
 
@@ -19,3 +21,35 @@ def split_into_chunks(args):
         # write remainder
         if len(lines) > 0:
             write_chunk((count // chunk_size) + 1, lines)
+
+def clean_data_dir():
+    # Clean the data directory before splitting again
+    for filename in os.listdir("./data/"):
+        file_path = os.path.join("./data/", filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+def check_flag(args):
+    if args.no_create_chunks:
+        return True
+    if (not os.path.isfile("checkfile") or args.no_prepared_data or args.no_create_chunks):
+        return False
+    else:
+        with open("checkfile", 'r') as file:
+            size = str(args.chunk_size)
+            if (file.readline() == size):
+                file.close()
+                return True
+            else:
+                file.close
+                return False
+
+def write_flag(args):
+    with open("checkfile", 'w') as file:
+        file.write(str(args.chunk_size))
+        file.close()
