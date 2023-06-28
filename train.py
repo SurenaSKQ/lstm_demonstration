@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import multiprocessing
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from model_skeleton import Model
@@ -7,7 +8,7 @@ from dataset_maker import Dataset
 
 def train(dataset, model, args):
     model.train()
-    dataloader = DataLoader(dataset, batch_size=args.batch_size, num_workers=12)
+    dataloader = DataLoader(dataset, batch_size=args.batch_size, num_workers=int(multiprocessing.cpu_count()))
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     for epoch in range(args.max_epochs):
