@@ -11,18 +11,22 @@ from data_chunks import *
 from comp_utils import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--max-epochs', type=int, default=5)
-parser.add_argument('--batch-size', type=int, default=256)
-parser.add_argument('--sequence-length', type=int, default=6)
-parser.add_argument('--no-prepared-data', action='store_true')
-parser.add_argument('--next-words', type=int, default=100)
-parser.add_argument('--chunk-size', type=int, default=4998)
-parser.add_argument('--model-checkpoint', type=str, default="savestate")
-parser.add_argument('--no-create-chunks', action='store_true')
-parser.add_argument('--use-prev-clean-data', action='store_true')
-parser.add_argument('--dont-use-checkpoint', action='store_true')
-parser.add_argument('source', type=str)
-parser.add_argument('text', type=str)
+parser.add_argument('--max-epochs', help="Number of training epochs (only applicaple if training)",\
+     type=int, default=5)
+parser.add_argument('--batch-size', help="Dataloader's batch size for loading into device (only applicaple if training)",\
+     type=int, default=256)
+parser.add_argument('--sequence-length', help="Training sequence length (only applicaple if training)", type=int, default=6)
+parser.add_argument('--next-words', help="Number of words to predict", type=int, default=100)
+parser.add_argument('--chunk-size', help="Size of data chunks in lines", type=int, default=4998)
+parser.add_argument('--no-prepared-data', help="Don't use prepared data; supercedes the other relevant options",\
+     action='store_true')
+parser.add_argument('--no-create-chunks', help="Don't create data chunks", action='store_true')
+parser.add_argument('--dont-use-checkpoint', help="Don't use saved model state", action='store_true')
+parser.add_argument('--use-prev-clean-data', help="Decompress previously cleaned text and use it", \
+    action='store_true')
+parser.add_argument('--model-checkpoint', help="File to store model state",type=str, default="savestate")
+parser.add_argument('source', help="Training source file", type=str)
+parser.add_argument('text', help="Text to predict from",type=str)
 args = parser.parse_args()
 
 if (not (os.path.isdir("./data/"))):
