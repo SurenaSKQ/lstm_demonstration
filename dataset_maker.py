@@ -19,10 +19,11 @@ class Dataset(torch.utils.data.Dataset):
         self.words_indexes = [self.word_to_index[w] for w in self.words]
     def load_words(self):
         with open("clean_tweets", 'r') as source:
-            tweets = "".join(source.readline() for line in source)
-            clean_tweets = "".join(word_tokenize(tweets))
-            source.close()
-        return clean_tweets
+            # tweets = "".join(source.readline() for line in source)
+            # clean_tweets = "".join(word_tokenize(tweets))
+            # source.close()
+            tweets = pathlib.Path("clean_tweets").read_text()
+        return word_tokenize(tweets)
     def get_uniq_words(self):
         word_counts = Counter(self.words)
         return sorted(word_counts, key=word_counts.get, reverse=True)

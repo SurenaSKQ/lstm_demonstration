@@ -25,6 +25,9 @@ parser.add_argument('source', type=str)
 parser.add_argument('text', type=str)
 args = parser.parse_args()
 
+if (not (os.path.isdir("./data/"))):
+    os.mkdir("./data/")
+
 if (args.no_prepared_data):
     if (os.path.isfile("clean_tweets")):
         os.remove("clean_tweets")
@@ -47,13 +50,15 @@ if (not check_flag(args)):
     write_flag(args)
 
 if (not (os.path.isfile("clean_tweets")) or args.no_prepared_data):
-    directory = os.fsencode("./data/")
-    for file in os.listdir(directory):
-        filename =  os.path.join("./data/", os.fsdecode(file))
-        tweets = persian_only(filename)
-        normalize_tweets(tweets, "clean_tweets")
-        if (os.stat("clean_tweets").st_size > 52428800):
-            break
+    # directory = os.fsencode("./data/")
+    # for file in os.listdir(directory):
+    #     filename =  os.path.join("./data/", os.fsdecode(file))
+    #     tweets = persian_only(filename)
+    #     normalize_tweets(tweets, "clean_tweets")
+    #     if (os.stat("clean_tweets").st_size > 52428800):
+    #         break
+    tweets = persian_only("./data/data_part_1.csv")
+    normalize_tweets(tweets, "clean_tweets")
     compress("clean_tweets", "clean_comp.gzip")
 
 dataset = Dataset(args)
@@ -62,6 +67,7 @@ model = Model(dataset)
 if (not (os.path.isfile(args.model_checkpoint)) or args.no_prepared_data or args.dont_use_checkpoint):
     train(dataset, model, args)
     checkpoint(model, args.model_checkpoint)
+else:
+    resume(model, args.model_checkpoint)
 
-resume(model, args.model_checkpoint)
 print(predict(dataset, model, args.text, args.next_words))
